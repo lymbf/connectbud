@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 
+import { AttributionTracker } from "@/components/layout/AttributionTracker";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { MobileCtaBar } from "@/components/layout/MobileCtaBar";
@@ -41,6 +42,7 @@ export default function RootLayout({
         </main>
         <Footer />
         <MobileCtaBar />
+        <AttributionTracker />
       </body>
     </html>
   );

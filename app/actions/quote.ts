@@ -1,6 +1,9 @@
 "use server";
 
+import { honeypotField, serviceField } from "@/app/actions/quote-fields";
+import { isServiceSlug } from "@/model/data/navigation";
 import { quoteValidation } from "@/model/pages/home";
+import { ATTRIBUTION_MAX_LENGTH, attributionFields, type Attribution } from "@/utils/attribution";
 
 export type QuoteField = "name" | "phone" | "email" | "message" | "consent";
 
@@ -22,7 +25,7 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
  */
 export async function sendQuoteRequest(_previous: QuoteFormState, formData: FormData): Promise<QuoteFormState> {
   // pole-pułapka na boty – niewidoczne dla ludzi, więc u nich zawsze puste
-  if (String(formData.get("company") ?? "").trim() !== "") {
+  if (String(formData.get(honeypotField) ?? "").trim() !== "") {
     return { status: "success" };
   }
 
@@ -50,8 +53,19 @@ export async function sendQuoteRequest(_previous: QuoteFormState, formData: Form
     return { status: "error", message: quoteValidation.summary, errors, values: { ...values, consent } };
   }
 
-  // TODO: tu wyślij zapytanie do firmy (e-mail / CRM). Do czasu integracji trafia tylko do logów serwera.
-  console.info("[Zapytanie o wycenę]", { ...values, sentAt: new Date().toISOString() });
+  // usługa (podstrona, z której wysłano formularz) i źródło wizyty (kampania, strona wejścia) –
+  // mają trafić do wiadomości z zapytaniem razem z danymi klienta
+  const serviceValue = String(formData.get(serviceField) ?? "");
+  const service = isServiceSlug(serviceValue) ? serviceValue : null;
+  const source: Attribution = {};
+  for (const field of attributionFields) {
+    const value = String(formData.get(field) ?? "").trim();
+    if (value) source[field] = value.slice(0, ATTRIBUTION_MAX_LENGTH);
+  }
+
+  // TODO: tu wyślij zapytanie do firmy (e-mail / CRM) razem z usługą i źródłem wizyty.
+  // Do czasu integracji trafia tylko do logów serwera.
+  console.info("[Zapytanie o wycenę]", { ...values, service, source, sentAt: new Date().toISOString() });
 
   return { status: "success" };
 }

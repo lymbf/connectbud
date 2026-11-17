@@ -17,6 +17,7 @@ import { home } from "@/model/pages/home";
 export const metadata: Metadata = {
   title: { absolute: home.meta.title },
   description: home.meta.description,
+  alternates: { canonical: "/" },
   openGraph: {
     title: home.meta.title,
     description: home.meta.description,

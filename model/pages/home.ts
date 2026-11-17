@@ -6,7 +6,7 @@ import offerTurnkey from "@/public/images/oferta/wykonczenia-pod-klucz.jpg";
 import offerDesign from "@/public/images/oferta/remonty-z-projektem.jpg";
 import offerBathrooms from "@/public/images/oferta/remonty-lazienek.jpg";
 
-import { quoteHref } from "@/model/data/navigation";
+import { designServiceLink, quoteHref, servicePath } from "@/model/data/navigation";
 
 /*
  * Wszystkie teksty strony głównej, sekcja po sekcji.
@@ -180,12 +180,15 @@ export const home: HomePage = {
     title: "Co możemy dla Ciebie zrobić?",
     subtitle:
       "Niezależnie od zakresu prac, działamy tak samo: z konkretnym planem, jasną komunikacją i dbałością o każdy detal.",
+    // karty prowadzą do podstron usług; teksty przycisków to propozycja do akceptacji
+    // (wcześniej: „Pokaż mi, jak to wygląda w praktyce”, „Zamów wycenę wykończenia”,
+    // „Umów się na bezpłatną konsultację”, „Zobacz nasze realizacje łazienek”)
     items: [
       {
         name: "Kompleksowe remonty",
         title: "Remont od A do Z",
         text: "Bez żonglowania kilkoma firmami. Jeden punkt kontaktu, jeden harmonogram, zero niespodzianek — od wyburzeń przez elektrykę i hydraulikę aż po ostatnią lampę na suficie.",
-        cta: { label: "Pokaż mi, jak to wygląda w praktyce", href: "/realizacje" },
+        cta: { label: "Zobacz zakres prac i realizacje", href: servicePath("kompleksowe-remonty") },
         image: offerComplex,
         imageAlt: "Otwarty salon z kuchnią po kompleksowym remoncie: drewniana zabudowa, szara sofa, dębowa podłoga",
       },
@@ -193,7 +196,7 @@ export const home: HomePage = {
         name: "Wykończenia pod klucz",
         title: "Od gołych ścian do gotowego mieszkania",
         text: "Odbierasz mieszkanie w stanie deweloperskim? Prowadzimy je od gładzi na ścianach po ostatnią listwę i lampę — podłogi, glazura, łazienka, malowanie, oświetlenie. Wprowadzasz się z walizkami, nie z listą rzeczy do zrobienia.",
-        cta: { label: "Zamów wycenę wykończenia", href: quoteHref },
+        cta: { label: "Zobacz, co obejmuje wykończenie", href: servicePath("wykonczenia-pod-klucz") },
         image: offerTurnkey,
         imageAlt: "Wykończony salon z ciemną ścianą telewizyjną z drewna i skórzanymi sofami",
       },
@@ -201,7 +204,7 @@ export const home: HomePage = {
         name: "Remonty z projektem",
         title: "Masz wizję? Dopracujemy ją do milimetra.",
         text: "Nie wiesz, jak przełożyć swoją wizję na realny plan? Współpracujemy z projektantami wnętrz — dostajesz spójną przestrzeń, zaplanowaną w najmniejszym detalu, zanim wbijemy pierwszy gwóźdź.",
-        cta: { label: "Umów się na bezpłatną konsultację", href: quoteHref },
+        cta: { label: "Z projektem czy bez? Sprawdź", href: designServiceLink.href },
         image: offerDesign,
         imageAlt: "Dłoń trzymająca przezroczysty rysunek techniczny kuchni na tle marmurowego blatu i baterii",
       },
@@ -209,7 +212,7 @@ export const home: HomePage = {
         name: "Remonty łazienek",
         title: "Łazienka bez miesięcy chaosu",
         text: "Hydraulika, płytki, wyposażenie — wszystko w jednym zleceniu. Roboty trwają tygodnie, nie miesiące, a na końcu dostajesz dokładnie to, co miałeś w głowie.",
-        cta: { label: "Zobacz nasze realizacje łazienek", href: "/realizacje#lazienki" },
+        cta: { label: "Zobacz łazienki przed i po", href: servicePath("remonty-lazienek") },
         image: offerBathrooms,
         imageAlt: "Nowoczesna łazienka z podświetlanymi wnękami, umywalką nablatową i prysznicem za szklaną ścianką",
       },

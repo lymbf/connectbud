@@ -10,6 +10,7 @@ export { RulerIcon } from "./RulerIcon";
 // Ikony interfejsu (24×24)
 export { ArrowRightIcon } from "./ArrowRightIcon";
 export { CheckIcon } from "./CheckIcon";
+export { ChevronDownIcon } from "./ChevronDownIcon";
 export { CloseIcon } from "./CloseIcon";
 export { MailIcon } from "./MailIcon";
 export { MapPinIcon } from "./MapPinIcon";

@@ -1,17 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
 import { sendQuoteRequest, type QuoteField, type QuoteFormState } from "@/app/actions/quote";
+import { honeypotField, serviceField } from "@/app/actions/quote-fields";
 import { Button } from "@/components/UI/Button";
 import { CheckboxField, TextAreaField, TextField } from "@/components/UI/form/FormField";
 import { ArrowRightIcon, CheckIcon } from "@/components/UI/icons";
+import type { ServiceSlug } from "@/model/data/navigation";
 import type { QuoteFormContent } from "@/model/pages/home";
+import { getAttributionSnapshot, parseAttribution, subscribeAttribution } from "@/utils/attribution";
 
 type QuoteFormProps = {
   content: QuoteFormContent;
   phone: { display: string; href: string };
+  /** Usługa podstrony, na której jest formularz – wysyłana w ukrytym polu */
+  service?: ServiceSlug;
 };
 
 const initialState: QuoteFormState = { status: "idle" };
@@ -40,11 +45,15 @@ type QuoteFormBodyProps = QuoteFormProps & {
   onReset: () => void;
 };
 
-function QuoteFormBody({ content, phone, focusFirstField, onReset }: QuoteFormBodyProps) {
+function QuoteFormBody({ content, phone, service, focusFirstField, onReset }: QuoteFormBodyProps) {
   const [state, formAction, pending] = useActionState(sendQuoteRequest, initialState);
   const { fields } = content;
   const errors = state.errors ?? {};
   const values = state.values ?? {};
+
+  // źródło wizyty (gclid, utm_*, strona wejścia) zapisane przy wejściu na stronę – patrz utils/attribution.ts
+  const attributionJson = useSyncExternalStore(subscribeAttribution, getAttributionSnapshot, () => null);
+  const attribution = useMemo(() => Object.entries(parseAttribution(attributionJson)), [attributionJson]);
 
   // po nieudanej walidacji przenosimy fokus na pierwsze pole z błędem
   useEffect(() => {
@@ -111,11 +120,17 @@ function QuoteFormBody({ content, phone, focusFirstField, onReset }: QuoteFormBo
         />
       </div>
 
-      {/* pole-pułapka na boty – ukryte dla ludzi */}
+      {/* pole-pułapka na boty – ukryte dla ludzi (podpis na wypadek, gdyby nie wczytały się style) */}
       <div aria-hidden="true" className="hidden">
-        <label htmlFor="quote-company">Firma</label>
-        <input id="quote-company" type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label htmlFor="quote-trap">Zostaw to pole puste</label>
+        <input id="quote-trap" type="text" name={honeypotField} tabIndex={-1} autoComplete="off" />
       </div>
+
+      {/* usługa podstrony i źródło wizyty – trafiają do zapytania razem z danymi z formularza */}
+      {service ? <input type="hidden" name={serviceField} value={service} /> : null}
+      {attribution.map(([name, value]) => (
+        <input key={name} type="hidden" name={name} value={value} />
+      ))}
 
       <CheckboxField
         id={fieldId("consent")}

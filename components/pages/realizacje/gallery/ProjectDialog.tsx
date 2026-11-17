@@ -13,6 +13,8 @@ import { nbsp } from "@/utils/nbsp";
 type ProjectDialogProps = {
   project: Project;
   content: GalleryContent["dialog"];
+  /** Zdjęcie, od którego zaczyna się podgląd (to samo co na okładce karty) */
+  initialIndex?: number;
   onClose: () => void;
 };
 
@@ -41,11 +43,11 @@ function ChevronIcon({ direction }: { direction: "prev" | "next" }) {
  * po zamknięciu fokus wraca na kartę). Zdjęcia przełącza się strzałkami, miniaturami, klawiaturą
  * (← →) i przesunięciem palcem.
  */
-export function ProjectDialog({ project, content, onClose }: ProjectDialogProps) {
+export function ProjectDialog({ project, content, initialIndex = 0, onClose }: ProjectDialogProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef<number | null>(null);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(() => (initialIndex < project.photos.length ? initialIndex : 0));
   const titleId = useId();
 
   const count = project.photos.length;
@@ -206,7 +208,13 @@ export function ProjectDialog({ project, content, onClose }: ProjectDialogProps)
             ))}
           </ul>
 
-          <ButtonLink href={content.cta.href} variant="light" className="mt-10 w-full sm:w-auto">
+          {/* okno zamyka się przed przejściem – na stronach usług formularz jest na tej samej stronie, pod oknem */}
+          <ButtonLink
+            href={content.cta.href}
+            variant="light"
+            onClick={() => dialogRef.current?.close()}
+            className="mt-10 w-full sm:w-auto"
+          >
             {content.cta.label}
             <ArrowRightIcon size={16} />
           </ButtonLink>

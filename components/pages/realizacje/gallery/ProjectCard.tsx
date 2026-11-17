@@ -15,6 +15,8 @@ type ProjectCardProps = {
   /** Galeria: otwiera podgląd zdjęć. Zajawka (np. w O nas): zamiast tego podaj href. */
   onOpen?: () => void;
   href?: string;
+  /** Numer zdjęcia na okładce (domyślnie pierwsze) – np. łazienka na stronie remontów łazienek */
+  coverIndex?: number;
   className?: string;
   style?: CSSProperties;
 };
@@ -25,8 +27,8 @@ type ProjectCardProps = {
  * Gdy karta jest szeroka (np. zajmuje dwie kolumny siatki), sama przechodzi w układ poziomy
  * ze zdjęciem po lewej i krótkim opisem – reaguje na własną szerokość (container query).
  */
-export function ProjectCard({ project, photoForms, actionLabel, onOpen, href, className, style }: ProjectCardProps) {
-  const cover = project.photos[0];
+export function ProjectCard({ project, photoForms, actionLabel, onOpen, href, coverIndex = 0, className, style }: ProjectCardProps) {
+  const cover = project.photos[coverIndex] ?? project.photos[0];
   const category = projectCategories.find((item) => item.id === project.category)?.label;
   const count = project.photos.length;
 

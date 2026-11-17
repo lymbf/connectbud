@@ -38,7 +38,8 @@ export function Footer() {
 
           <FooterColumn title={footer.navTitle} className="lg:col-span-2">
             <ul className="space-y-3 text-sm">
-              {mainNav.map((link) => (
+              {/* „Oferta” jest rozpisana w kolumnie Usługi obok */}
+              {mainNav.filter((link) => !link.children).map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className={linkClasses}>
                     {link.label}

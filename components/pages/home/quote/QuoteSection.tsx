@@ -5,15 +5,18 @@ import { CheckIcon, MailIcon, MapPinIcon, PhoneIcon } from "@/components/UI/icon
 import { Section } from "@/components/UI/Section";
 import { SectionHeader } from "@/components/UI/SectionHeader";
 import { company } from "@/model/data/company";
+import type { ServiceSlug } from "@/model/data/navigation";
 import type { QuoteContent } from "@/model/pages/home";
 import { nbsp } from "@/utils/nbsp";
 
 type QuoteSectionProps = {
   content: QuoteContent;
+  /** Na podstronie usługi – formularz wysyła ją w ukrytym polu */
+  service?: ServiceSlug;
 };
 
 /** Końcowe wezwanie do działania: korzyści, dane kontaktowe i formularz wyceny. */
-export function QuoteSection({ content }: QuoteSectionProps) {
+export function QuoteSection({ content, service }: QuoteSectionProps) {
   const { id, eyebrow, title, subtitle, benefits, callLabel, areaNote, form } = content;
   const titleId = `${id}-title`;
 
@@ -66,7 +69,7 @@ export function QuoteSection({ content }: QuoteSectionProps) {
                 className="pointer-events-none absolute -right-4 -bottom-4 hidden size-full border border-white/20 lg:block"
               />
               <div className="relative">
-                <QuoteForm content={form} phone={company.phone} />
+                <QuoteForm content={form} phone={company.phone} service={service} />
               </div>
             </div>
           </div>

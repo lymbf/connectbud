@@ -13,14 +13,33 @@ import { cn } from "@/utils/cn";
 type MobileMenuProps = {
   id: string;
   open: boolean;
+  /** Bieżący adres – oznacza aktywną pozycję menu */
+  pathname: string;
   /** Cel przycisku wyceny – zależy od strony (patrz getQuoteHref) */
   quoteHref: string;
   onNavigate: () => void;
 };
 
-/** Pełnoekranowe menu na telefonach i tabletach (poniżej 1024 px). */
-export function MobileMenu({ id, open, quoteHref, onNavigate }: MobileMenuProps) {
+/**
+ * Pełnoekranowe menu na telefonach i tabletach (poniżej 1024 px).
+ * Usługi z „Oferty” są widoczne od razu pod nią (wcięte, mniejsze) – bez dodatkowego rozwijania.
+ */
+export function MobileMenu({ id, open, pathname, quoteHref, onNavigate }: MobileMenuProps) {
   const { header, mobileMenu } = layoutContent;
+
+  // pozycje wjeżdżają po kolei – licznik obejmuje też usługi pod „Ofertą”
+  let order = 0;
+  const enter = (className: string) => {
+    const delay = open ? `${120 + order++ * 60}ms` : "0ms";
+    return {
+      className: cn(
+        className,
+        "transition-[transform,opacity] duration-700 ease-out",
+        open ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
+      ),
+      style: { transitionDelay: delay },
+    };
+  };
 
   return (
     <div
@@ -34,20 +53,40 @@ export function MobileMenu({ id, open, quoteHref, onNavigate }: MobileMenuProps)
       <Container className="flex flex-1 flex-col pb-10">
         <nav aria-label={header.navLabel}>
           <ul className="border-t border-white/10">
-            {mainNav.map((link, index) => (
-              <li key={link.href} className="overflow-hidden border-b border-white/10">
+            {mainNav.map((item) => (
+              <li key={item.href} className="overflow-hidden border-b border-white/10">
                 <Link
-                  href={link.href}
+                  href={item.href}
                   onClick={onNavigate}
-                  className={cn(
-                    "flex items-center justify-between py-5 font-heading text-[1.875rem] font-medium transition-[transform,opacity] duration-700 ease-out",
-                    open ? "translate-y-0 opacity-100" : "translate-y-6 opacity-0",
-                  )}
-                  style={{ transitionDelay: open ? `${120 + index * 70}ms` : "0ms" }}
+                  aria-current={item.href === pathname ? "page" : undefined}
+                  {...enter("flex items-center justify-between py-5 font-heading text-[1.875rem] font-medium")}
                 >
-                  {link.label}
+                  {item.label}
                   <ArrowRightIcon size={22} className="text-steel" />
                 </Link>
+
+                {item.children ? (
+                  <ul className="-mt-1 pb-5 pl-1">
+                    {item.children.map((child) => (
+                      <li key={child.href}>
+                        <Link
+                          href={child.href}
+                          onClick={onNavigate}
+                          aria-current={child.href === pathname ? "page" : undefined}
+                          {...enter(
+                            cn(
+                              "flex items-center justify-between border-l py-2.5 pl-5 text-lg font-medium",
+                              child.href === pathname ? "border-white text-white" : "border-white/20 text-white/75",
+                            ),
+                          )}
+                        >
+                          {child.label}
+                          <ArrowRightIcon size={18} className="text-steel" />
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </li>
             ))}
           </ul>

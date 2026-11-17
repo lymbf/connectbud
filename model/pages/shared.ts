@@ -21,6 +21,13 @@ export type PageHeroContent = {
   subtitle: string;
   /** Krótka linia w cienkiej ramce po prawej stronie (tylko desktop) */
   aside?: string;
+  /** Przyciski pod tytułem: wycena (np. formularz na tej samej stronie) i telefon – na stronach usług */
+  cta?: PageHeroCta;
+};
+
+export type PageHeroCta = Link & {
+  /** Opis przycisku z numerem telefonu dla czytników ekranu, np. „Zadzwoń” */
+  callLabel: string;
 };
 
 /** Pas z wezwaniem do działania na końcu podstrony. */

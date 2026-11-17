@@ -2,7 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { HeroParallax } from "@/components/pages/home/hero/HeroParallax";
+import { ButtonLink } from "@/components/UI/Button";
 import { Container } from "@/components/UI/Container";
+import { ArrowRightIcon, PhoneIcon } from "@/components/UI/icons";
 import { Wire } from "@/components/UI/Wire";
 import { company } from "@/model/data/company";
 import type { PageHeroContent } from "@/model/pages/shared";
@@ -20,9 +22,11 @@ const homeLabel = "Strona główna";
 /**
  * Nagłówek podstrony w stylu hero ze strony głównej: przyciemnione zdjęcie, ścieżka nawigacji
  * i blok w kolorze marki z tytułem – tu po lewej stronie (na stronie głównej jest po prawej).
+ * Na stronach usług blok ma też przyciski: wycena (formularz na tej samej stronie) i telefon –
+ * widoczne na wszystkich szerokościach, bo na te strony trafia ruch z reklam.
  */
 export function PageHero({ content, size = "default" }: PageHeroProps) {
-  const { image, imagePosition, breadcrumb, path, eyebrow, title, subtitle, aside } = content;
+  const { image, imagePosition, breadcrumb, path, eyebrow, title, subtitle, aside, cta } = content;
 
   // dane strukturalne ścieżki nawigacji (SEO)
   const breadcrumbJsonLd = {
@@ -101,6 +105,27 @@ export function PageHero({ content, size = "default" }: PageHeroProps) {
             >
               {nbsp(subtitle)}
             </p>
+
+            {cta ? (
+              <div
+                className="intro-fade-up mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+                style={{ animationDelay: "1s" }}
+              >
+                <ButtonLink href={cta.href} variant="light" className="w-full sm:w-auto">
+                  {cta.label}
+                  <ArrowRightIcon size={16} />
+                </ButtonLink>
+                <ButtonLink
+                  href={company.phone.href}
+                  variant="outline-light"
+                  aria-label={`${cta.callLabel}: ${company.phone.display}`}
+                  className="w-full sm:w-auto"
+                >
+                  <PhoneIcon size={16} />
+                  {company.phone.display}
+                </ButtonLink>
+              </div>
+            ) : null}
           </div>
 
           {aside ? (
